@@ -1,4 +1,5 @@
 import Realm from 'realm'
+import db from './db'
 
 class Model extends Realm.Object {}
 Model.schema = {
@@ -7,23 +8,67 @@ Model.schema = {
 	properties: {
 		id: 'int',
 		name: 'string',
-		description: 'string'
+		description: 'string',
+		collections: {type: 'list', objectType: 'Collection'},
+		newCollections: {type: 'list', objectType: 'NewCollection'}
 	}
 }
 
+class Collection extends Realm.Object {}
+Collection.schema = {
+	name: 'Collection',
+	primaryKey: 'id',
+	properties: {
+		id: 'int',
+		name: 'string'
+	}
+}
+
+class NewCollection extends Realm.Object {}
+NewCollection.schema = {
+	name: 'NewCollection',
+	primaryKey: 'id',
+	properties: {
+		id: 'int',
+		new_name: 'string'
+	}
+}
+
+
+const realm = new Realm({schema: [Model, Collection, NewCollection], schemaVersion: 5});
+export default realm
 
 Model.prototype.get = function(key=null){
 	return key == null ? this : this[key]
 }
 
-Model.prototype.set = function(realm, key, value) {
-	console.dir(realm);
-	console.log("Inside schema proto def")
-	realm.write(()=>{
-		this[key] = value
-	})
-	return this[key]
+Model.prototype.set = function(newObject) {
+	let updatedObj = merge(this, newObject)
+
+	function merge(source:Object, target:Object){
+	  for(let i in target){
+	  	//console.log("target ", target[i], source[i])
+	    if((source.hasOwnProperty(i)) && i != 'id'){  
+	      //Excluding ID, presence of id key in updatedObj, creates a new model with that key
+	      if(typeof source[i] != 'object'){
+			//console.log("reaching here with", target[i], source[i])
+	      	realm.write(()=>{
+		      	source[i] = target[i] ? target[i] : source[i]
+	      	})
+	      }
+		  else {
+		  	for(let j in target[i]){
+		  		let newNestedObj = db.create((i[0].toUpperCase() + i.slice(1,-1)), 'id', target[i][j])
+		  		//console.log(newNestedObj, target[i][j], "GIVE IT TO ME")
+		  		realm.write(()=>{
+		  			source[i].push(newNestedObj)
+		  		})
+		  	}
+		  }
+	    }
+	  }
+		return source
+	}
 }
 
-export default new Realm({schema: [Model], schemaVersion: 2});
-//export default realm1
+

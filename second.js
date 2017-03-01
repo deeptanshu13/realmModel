@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Navigator
+  Navigator,
+  TouchableOpacity
 } from 'react-native';
 
 
@@ -19,29 +20,40 @@ import db from './realm/db'
 
 class Second extends Component {
   componentWillMount() {
-    db.create('Model','id', {id: 8, name: 'yolo7', description: 'rUK'});
-    db.create('Model','id', {id: 9, name: 'yolo11', description: 'rUk jaa na'});
-    db.create('Model','id', {id: 10, name: 'yolo32', description: 'ruk bc!'});
+    // db.create('Model','id', {id: 8, name: 'yolo7', description: 'rUK'});
+    // db.create('Model','id', {id: 9, name: 'yolo11', description: 'rUk jaa na'});
+    // db.create('Model','id', {id: 10, name: 'yolo32', description: 'ruk bc!'});
 
+    //let first = realm.objects('Model')[0]
+    //first.set({description: 'dns BADLUNA'})
+
+    //first.set({newCollections: [{new_name: 'new mas', id: 1}, {new_name: 'endura nash', id: 2}], description: 'changed again'})
     //var product = Product.findOne();
     //db.create('Association', 'id', { id: 6, name: 'dsds' })
     //db.insertList({id: 2, name: 'assdssd', associations: {}}, 'associations', realm.objects('Association'))
   }
 
-  componentDidMount() {
+  display =() => {
+    console.log("!!", realm.objects('Model'))
+    console.log("!@@!", realm.objects('NewCollection'))
+    console.log("!@@!", realm.objects('Collection'))
     //console.log("path", realm.path)
     //(realm.objects('Model')[0]).set('description', 'ds bro')
-    let first = realm.objects('Model')[4]
-    first.set(realm, 'description', ' badal diya!')
     // console.log(realm.toString(), typeof realm)
-    // console.log("updated obj - >", first.get())
+  }
+
+  flush = () => {
+    realm.write(()=>{
+      realm.deleteAll()
+    })
   }
 
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>JmD</Text>
+        <TouchableOpacity onPress = {this.display}><Text>JmD</Text></TouchableOpacity>
+        <TouchableOpacity onPress = {this.flush}><Text>Destroy</Text></TouchableOpacity>
       </View>
     );
   }

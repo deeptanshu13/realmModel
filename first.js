@@ -20,18 +20,31 @@ import db from './realm/db'
 
 class First extends Component {
   componentWillMount() {
-    db.create('Model','id', {id: 5, name: 'yolo', description: 'Abhi deta hu bc!'});
-
     //var product = Product.findOne();
     //db.create('Association', 'id', { id: 6, name: 'dsds' })
     //db.insertList({id: 2, name: 'assdssd', associations: {}}, 'associations', realm.objects('Association'))
   }
 
+
+  create = ()=> {
+    db.create('Model','id', {id: 10, name: 'yolo@10', description: 'Abhi deta hu bc!',
+     collections: [{name: 'old hari', id: 1121}, {name: 'blue eyes', id: 1143}],
+     newCollections: [{new_name: 'halua', id: 117}, {new_name: ' poori', id: 120}]}
+    );
+  }
+
+
+  flush = () => {
+    realm.write(()=>{
+      realm.deleteAll()
+    })
+  }
+
   componentDidMount() {
     //console.log("path", realm.path)
     //(realm.objects('Model')[0]).set('description', 'ds bro')
-    let first = realm.objects('Model')[0]
-    first.set(realm, 'description', ' badal diya!')
+    //let first = realm.objects('Model')[0]
+    //first.set(realm, 'description', ' badal diya!')
     // console.log(realm.toString(), typeof realm)
     // console.log("updated obj - >", first.get())
   }
@@ -54,6 +67,16 @@ class First extends Component {
           <Text style={styles.instructions}>
             Double tap R on your keyboard to reload,{'\n'}
             Shake or press menu button for dev menu
+          </Text>
+        </TouchableOpacity>
+         <TouchableOpacity onPress={this.flush}>
+          <Text style={styles.instructions}>
+            FLUSH IT
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.create}>
+          <Text style={styles.instructions}>
+            db create
           </Text>
         </TouchableOpacity>
       </View>

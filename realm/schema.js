@@ -34,16 +34,17 @@ NewCollection.schema = {
 	}
 }
 
+let schemaArr = '[Model, Collection, NewCollection]'
 
-const realm = new Realm({schema: [Model, Collection, NewCollection], schemaVersion: 5});
+const realm = new Realm({schema: eval(schemaArr) , schemaVersion: 5});
 export default realm
 
-Model.prototype.get = function(key=null){
+var get = function(key=null){
 	return key == null ? this : this[key]
 }
 
-Model.prototype.set = function(newObject) {
-	let updatedObj = merge(this, newObject)
+var set = function(newObject, overwriteNested=false) {
+	return merge(this, newObject)
 
 	function merge(source:Object, target:Object){
 	  for(let i in target){
@@ -51,24 +52,34 @@ Model.prototype.set = function(newObject) {
 	    if((source.hasOwnProperty(i)) && i != 'id'){  
 	      //Excluding ID, presence of id key in updatedObj, creates a new model with that key
 	      if(typeof source[i] != 'object'){
-			//console.log("reaching here with", target[i], source[i])
 	      	realm.write(()=>{
 		      	source[i] = target[i] ? target[i] : source[i]
 	      	})
 	      }
-		  else {
-		  	for(let j in target[i]){
-		  		let newNestedObj = db.create((i[0].toUpperCase() + i.slice(1,-1)), 'id', target[i][j])
-		  		//console.log(newNestedObj, target[i][j], "GIVE IT TO ME")
-		  		realm.write(()=>{
-		  			source[i].push(newNestedObj)
-		  		})
-		  	}
-		  }
+			  else {
+			  	if(overwriteNested){
+			  		realm.write(()=>{
+			  			realm.delete(source[i])
+			  		})
+			  	}
+			  	for(let j in target[i]){
+			  		let newNestedObj = db.create((i[0].toUpperCase() + i.slice(1,-1)), 'id', target[i][j])
+			  		realm.write(()=>{
+			  			source[i].push(newNestedObj)
+			  		})
+			  	}
+			  }
 	    }
 	  }
 		return source
 	}
+}
+
+schemaArr = schemaArr.slice(1,-1).split(',')
+
+for(let iter in schemaArr ){
+	eval(schemaArr[iter].trim()+'.prototype.set='+set)
+	eval(schemaArr[iter].trim()+'.prototype.get='+get)
 }
 
 

@@ -34,9 +34,10 @@ class Second extends Component {
   }
 
   display =() => {
-    console.log("!!", realm.objects('Model'))
-    console.log("!@@!", realm.objects('NewCollection'))
-    console.log("!@@!", realm.objects('Collection'))
+    let model = realm.objects('Model')
+    model[0].set({ description: 'BADALA PUR!', collections: [{name: 'MAHARAJ', id: 121}], newCollections: [{new_name: 'MAHARAJ WHITELINE', id: 1212}]}, true)
+    //console.log("!@@!", realm.objects('NewCollection'))
+    //console.log("!@@!", realm.objects('Collection'))
     //console.log("path", realm.path)
     //(realm.objects('Model')[0]).set('description', 'ds bro')
     // console.log(realm.toString(), typeof realm)
@@ -48,10 +49,26 @@ class Second extends Component {
     })
   }
 
+  displayModel = () => {
+    let model = realm.objects('Model')
+    console.log(model)
+    //let new_collection = realm.objects('NewCollection')
+    
+  }
+
+  show = () => {
+    let collection = realm.objects('Collection')
+    let new_collection = realm.objects('NewCollection')
+    console.log(collection[0].set({name: 'MAINE BADAL LIYA'})) 
+    console.log(new_collection[0].set({new_name: 'MAINE BHI BADAL LIYA CHOTEEE'})) 
+  }
+
 
   render() {
     return (
       <View style={styles.container}>
+        <TouchableOpacity onPress = {this.show}><Text>SHOW</Text></TouchableOpacity>
+        <TouchableOpacity onPress = {this.displayModel}><Text>MODEL</Text></TouchableOpacity>
         <TouchableOpacity onPress = {this.display}><Text>JmD</Text></TouchableOpacity>
         <TouchableOpacity onPress = {this.flush}><Text>Destroy</Text></TouchableOpacity>
       </View>

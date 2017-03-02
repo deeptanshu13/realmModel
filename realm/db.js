@@ -11,7 +11,7 @@ module.exports = {
       let update = current.length ? true : false
       let writeData
       realm.write(()=>{
-        writeData = update ? this._merge(current[0], data) : this._removeObjects(data)
+        writeData = update ? this._merge(current[0], data, primaryKey) : this._removeObjects(data)
         current = realm.create(model, writeData, update)
         this._addNestedObject(current, data)
       })
@@ -26,9 +26,9 @@ module.exports = {
 
     /* oldObj gets modified into updated object, values coming as null in target are ignored,
         normal Object.assign overrides the source with the target, irrespective of null values */
-    _merge: function(source:Object, target:Object){
+    _merge: function(source:Object, target:Object, primaryKey:String){
       for(let i in target){
-        if(source.hasOwnProperty(i) && (typeof source[i] != 'object') && i != 'id'){
+        if(source.hasOwnProperty(i) && (typeof source[i] != 'object') && i != primaryKey){
           source[i] = target[i] ? target[i] : source[i]
         }
         else if(typeof source[i] == 'object'){

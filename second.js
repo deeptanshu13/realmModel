@@ -35,7 +35,7 @@ class Second extends Component {
 
   display =() => {
     let model = realm.objects('Model')
-    model[0].set({ description: 'BADALA PUR!', collections: [{name: 'MAHARAJ', id: 121}], newCollections: [{new_name: 'MAHARAJ WHITELINE', id: 1212}]}, true)
+    model[0].set({ description: 'BADALA PUR!', collections: [{name: 'MAHARAJ', id: 121}], newCollections: [{new_name: 'MAHARAJ WHITELINE', id: 1212}]})
     //console.log("!@@!", realm.objects('NewCollection'))
     //console.log("!@@!", realm.objects('Collection'))
     //console.log("path", realm.path)

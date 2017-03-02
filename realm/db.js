@@ -19,9 +19,11 @@ module.exports = {
     },
 
     remove: function(deleteInstance:Object){
-      realm.delete(deleteInstance)
+      realm.write(()=>{
+        realm.delete(deleteInstance)
+      })
     },
-
+    
     //#Utils method
 
     /* oldObj gets modified into updated object, values coming as null in target are ignored,

@@ -50,7 +50,7 @@ var set = function(newObject, overwriteNested=false) {
 	  for(let i in target){
 	  	//console.log("target ", target[i], source[i])
 	    if((source.hasOwnProperty(i)) && i != 'id'){  
-	      //Excluding ID, presence of id key in updatedObj, creates a new model with that key
+	      //Excluding ID, presence of id key creates a new model with that key
 	      if(typeof source[i] != 'object'){
 	      	realm.write(()=>{
 		      	source[i] = target[i] ? target[i] : source[i]
@@ -58,9 +58,7 @@ var set = function(newObject, overwriteNested=false) {
 	      }
 			  else {
 			  	if(overwriteNested){
-			  		realm.write(()=>{
-			  			realm.delete(source[i])
-			  		})
+			  		db.remove(source[i])
 			  	}
 			  	for(let j in target[i]){
 			  		let newNestedObj = db.create((i[0].toUpperCase() + i.slice(1,-1)), 'id', target[i][j])
